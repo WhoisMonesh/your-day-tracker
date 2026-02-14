@@ -2,6 +2,8 @@ name: desktop-build
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     strategy:
@@ -27,3 +29,55 @@ jobs:
         with:
           name: desktop-${{ matrix.os }}
           path: release/**
+
+  build_linux_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build
+      - name: Build Linux artifacts in electron-builder Docker
+        run: |
+          docker run --rm \
+            -e CSC_IDENTITY_AUTO_DISCOVERY=false \
+            -v "$PWD":/project \
+            -w /project \
+            electronuserland/builder:latest \
+            /bin/bash -lc "npm ci && npx electron-builder --linux --publish never"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-docker-artifacts
+          path: release/**
+
+  release:
+    needs:
+      - build
+      - build_linux_docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*'
+          merge-multiple: true
+          path: artifacts
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ci-${{ github.run_number }}
+          name: CI Build ${{ github.run_number }} • ${{ github.sha }}
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          draft: false
+          body: |
+            Cross-platform desktop build with installers attached:
+            - Windows: NSIS installer (.exe) in desktop-windows-latest
+            - macOS: DMG/ZIP in desktop-macos-latest
+            - Linux: AppImage and deb in desktop-ubuntu-latest
+            - Linux (Docker builder): additional artifacts in linux-docker-artifacts
+            Built from commit ${{ github.sha }} on ref ${{ github.ref_name }}.
+          files: |
+            artifacts/**
