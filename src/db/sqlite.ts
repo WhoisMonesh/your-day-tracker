@@ -1,4 +1,5 @@
 import initSqlJs, { type Database, type SqlJsStatic } from "sql.js";
+import sqlWasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 import { DEFAULT_CATEGORIES, Task, Category, Subtask } from "@/types/task";
 import { readSnapshot, writeSnapshot } from "@/db/idb";
 import { readOpfsSnapshot, writeOpfsSnapshot } from "@/db/opfs";
@@ -8,7 +9,7 @@ let db: Database | null = null;
 
 async function ensureDB() {
   if (!sqlReady) {
-    sqlReady = initSqlJs({ locateFile: (file) => `/node_modules/sql.js/dist/${file}` });
+    sqlReady = initSqlJs({ locateFile: () => sqlWasmUrl });
   }
   const SQL = await sqlReady;
   if (!db) {
@@ -246,7 +247,7 @@ export async function exportSnapshotBlob(): Promise<Blob> {
 
 export async function importSnapshot(buffer: ArrayBuffer): Promise<void> {
   if (!sqlReady) {
-    sqlReady = initSqlJs({ locateFile: (file) => `/node_modules/sql.js/dist/${file}` });
+    sqlReady = initSqlJs({ locateFile: () => sqlWasmUrl });
   }
   const SQL = await sqlReady;
   db = new SQL.Database(new Uint8Array(buffer));

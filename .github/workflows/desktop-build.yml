@@ -86,7 +86,7 @@ jobs:
           tag_name: v${{ env.APP_VERSION }}
           name: YourDayTracker v${{ env.APP_VERSION }}
           target_commitish: ${{ github.sha }}
-          prerelease: true
+          prerelease: false
           draft: false
           fail_on_unmatched_files: false
           token: ${{ secrets.GITHUB_TOKEN }}
