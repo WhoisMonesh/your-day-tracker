@@ -57,6 +57,8 @@ jobs:
       - build
       - build_linux_docker
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -64,14 +66,22 @@ jobs:
           pattern: '*'
           merge-multiple: true
           path: artifacts
+      - name: List artifacts
+        run: |
+          echo "Artifacts downloaded to ./artifacts"
+          ls -R artifacts || dir artifacts
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ci-${{ github.run_number }}
           name: CI Build ${{ github.run_number }} • ${{ github.sha }}
           target_commitish: ${{ github.sha }}
           prerelease: true
           draft: false
+          fail_on_unmatched_files: false
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             Cross-platform desktop build with installers attached:
             - Windows: NSIS installer (.exe) in desktop-windows-latest
