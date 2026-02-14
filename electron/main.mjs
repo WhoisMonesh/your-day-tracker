@@ -9,6 +9,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -16,6 +17,13 @@ const createWindow = () => {
       sandbox: true
     }
   })
+  // Remove the default application menu
+  if (typeof win.removeMenu === 'function') {
+    win.removeMenu()
+  } else {
+    // Fallback for older Electron versions
+    win.setMenu(null)
+  }
   const devUrl = process.env.VITE_DEV_SERVER_URL
   if (devUrl) {
     win.loadURL(devUrl)
