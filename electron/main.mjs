@@ -5,7 +5,22 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const createWindow = () => {
+const loadApp = async (win) => {
+  const devUrl = process.env.VITE_DEV_SERVER_URL
+  if (devUrl) {
+    for (let i = 0; i < 30; i++) {
+      try {
+        await win.loadURL(devUrl)
+        return
+      } catch {
+        await new Promise(r => setTimeout(r, 500))
+      }
+    }
+  }
+  await win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
+}
+
+const createWindow = async () => {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -22,14 +37,7 @@ const createWindow = () => {
   } else {
     win.setMenu(null)
   }
-  const devUrl = process.env.VITE_DEV_SERVER_URL
-  if (devUrl) {
-    win.loadURL(devUrl).catch(() => {
-      win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
-    })
-  } else {
-    win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
-  }
+  await loadApp(win)
   win.webContents.on('did-fail-load', () => {
     win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   })
