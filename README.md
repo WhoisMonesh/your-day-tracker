@@ -2,6 +2,23 @@
 
 YourDayTracker is a cross‑platform desktop app to track your day—tasks, focus time, and exports—built with React, Vite, and Electron. Installers are available for Windows, macOS, and Linux.
 
+## Screenshot
+
+![YourDayTracker screenshot](./public/placeholder.svg)
+
+## Features
+
+- Task management with priorities, statuses, due dates, and subtasks
+- Multiple views: Dashboard, My Day, Calendar, and List
+- Categories with colors and icons, plus category settings
+- Reminders (including custom minutes) and repeating tasks (daily/weekly/monthly/custom)
+- Powerful command palette and keyboard‑friendly UI
+- Data storage in a local database (SQLite/OPFS/IndexedDB abstraction)
+- Export tasks to Excel, PDF, CSV, JSON, and ICS; import ICS
+- Local database backup/restore and encrypted backups
+- Works offline; PWA service worker included for better caching
+- Cross‑platform installers built via CI (Windows, macOS, Linux)
+
 ## Downloads
 
 - Latest releases: https://github.com/WhoisMonesh/your-day-tracker/releases/latest  
@@ -84,4 +101,3 @@ See: `.github/workflows/desktop-build.yml`
 ## Notes
 
 - CI artifacts are unsigned by default. For distribution, consider code‑signing (Windows) and notarization/signing (macOS).
-
