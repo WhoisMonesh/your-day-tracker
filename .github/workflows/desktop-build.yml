@@ -71,9 +71,7 @@ jobs:
           merge-multiple: false
           path: artifacts
       - name: Read app version
-        id: app_version
-        run: |
-          echo "APP_VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+        run: node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, `APP_VERSION=${v}\n`);"
       - name: List artifacts
         run: |
           echo "Artifacts downloaded to ./artifacts"
@@ -89,7 +87,6 @@ jobs:
           prerelease: true
           draft: false
           fail_on_unmatched_files: false
-          allow_override: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             Cross-platform installers for YourDayTracker v${{ env.APP_VERSION }}:
