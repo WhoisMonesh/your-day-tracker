@@ -63,8 +63,8 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: '*'
-          merge-multiple: true
+          pattern: 'desktop-*'
+          merge-multiple: false
           path: artifacts
       - name: List artifacts
         run: |
@@ -83,11 +83,14 @@ jobs:
           fail_on_unmatched_files: false
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            Cross-platform desktop build with installers attached:
-            - Windows: NSIS installer (.exe) in desktop-windows-latest
-            - macOS: DMG/ZIP in desktop-macos-latest
-            - Linux: AppImage and deb in desktop-ubuntu-latest
-            - Linux (Docker builder): additional artifacts in linux-docker-artifacts
+            Cross-platform installers attached:
+            - Windows: NSIS installer (.exe)
+            - macOS: DMG and ZIP
+            - Linux: AppImage and deb
             Built from commit ${{ github.sha }} on ref ${{ github.ref_name }}.
           files: |
-            artifacts/**
+            artifacts/desktop-windows-latest/**/*.exe
+            artifacts/desktop-macos-latest/**/*.dmg
+            artifacts/desktop-macos-latest/**/*.zip
+            artifacts/desktop-ubuntu-latest/**/*.AppImage
+            artifacts/desktop-ubuntu-latest/**/*.deb
