@@ -2,6 +2,8 @@
   "name": "your-day-tracker",
   "private": true,
   "version": "0.0.0",
+  "description": "YourDayTracker desktop app for Windows, macOS, and Linux",
+  "author": "whoismonesh <moneshram7@gmail.com>",
   "type": "module",
   "main": "electron/main.mjs",
   "scripts": {
