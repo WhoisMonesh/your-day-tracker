@@ -8,6 +8,9 @@ const __dirname = path.dirname(__filename)
 const loadApp = async (win) => {
   const devUrl = process.env.VITE_DEV_SERVER_URL
   if (devUrl) {
+    try {
+      win.webContents.openDevTools({ mode: 'detach' })
+    } catch {}
     for (let i = 0; i < 30; i++) {
       try {
         await win.loadURL(devUrl)
